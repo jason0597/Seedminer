@@ -23,10 +23,10 @@ public class Controller {
     }
 
     @FXML private void Bruteforce_Button() {
-        Path mp1_txt = Paths.get(mp1txt_TextField.getText());
+        Path mp1_txt = Paths.get("C:\\Users\\jason\\Desktop\\movable_part1.txt");
 
         if (!CPUbf_RadioButton.isSelected() && !GPUbf_RadioButton.isSelected()) {
-            Main.showAlertBox("Invalid bruteforce mode!", null, "Choose either a CPU bruteforce or a GPU bruteforce");
+            Main.showAlertBox("An exception occurred!", null, "Invalid bruteforce mode! Choose either a CPU bruteforce or a GPU bruteforce");
             return;
         }
 
@@ -36,6 +36,8 @@ public class Controller {
             miner.DoSeedminer();
         } catch (IOException e) {
             Main.showAlertBox("An exception occurred!", null, e.getMessage());
+        } catch (NumberFormatException e) {
+            Main.showAlertBox("An exception occurred!", null, "Failed to parse the LFCS/ID0 bytes!");
         }
     }
 }

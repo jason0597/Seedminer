@@ -1,5 +1,3 @@
-package seedminer;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
@@ -30,14 +28,20 @@ public class Controller {
             return;
         }
 
+        DataNodes downloader = new DataNodes();
         Seedminer miner = new Seedminer(mp1_txt, CPUbf_RadioButton.isSelected() ? 'c' : 'g');
 
         try {
-            miner.DoSeedminer();
+            byte[][] nodes = downloader.GetDataNodes();
+
+            miner.DoSeedminer(nodes);
+
         } catch (IOException e) {
             Main.showAlertBox("An exception occurred!", null, e.getMessage());
         } catch (NumberFormatException e) {
             Main.showAlertBox("An exception occurred!", null, "Failed to parse the LFCS/ID0 bytes!");
+        } catch (ArrayIndexOutOfBoundsException e) {
+            Main.showAlertBox("An exception occurred!", null, "Could not locate LFCS/ID0!");
         }
     }
 }

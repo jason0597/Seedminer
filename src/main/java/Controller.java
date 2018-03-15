@@ -21,27 +21,26 @@ public class Controller {
     }
 
     @FXML private void Bruteforce_Button() {
-        Path mp1_txt = Paths.get("C:\\Users\\jason\\Desktop\\movable_part1.txt");
+        Path mp1_txt = Paths.get(mp1txt_TextField.getText());
 
         if (!CPUbf_RadioButton.isSelected() && !GPUbf_RadioButton.isSelected()) {
-            Main.showAlertBox("An exception occurred!", null, "Invalid bruteforce mode! Choose either a CPU bruteforce or a GPU bruteforce");
+            Main.showAlertBox("Invalid bruteforce mode! Choose either a CPU bruteforce or a GPU bruteforce");
             return;
         }
 
-        DataNodes downloader = new DataNodes();
-        Seedminer miner = new Seedminer(mp1_txt, CPUbf_RadioButton.isSelected() ? 'c' : 'g');
-
         try {
-            byte[][] nodes = downloader.GetDataNodes();
-
+            Seedminer miner = new Seedminer(mp1_txt, GPUbf_RadioButton.isSelected());
+            boolean isNew3DS = miner.getNew3DS();
+            DataNodes downloader = new DataNodes();
+            byte[] nodes = downloader.GetDataNodes(isNew3DS);
             miner.DoSeedminer(nodes);
 
         } catch (IOException e) {
-            Main.showAlertBox("An exception occurred!", null, e.getMessage());
+            Main.showAlertBox(e.getMessage());
         } catch (NumberFormatException e) {
-            Main.showAlertBox("An exception occurred!", null, "Failed to parse the LFCS/ID0 bytes!");
+            Main.showAlertBox("Failed to parse the LFCS/ID0 bytes!");
         } catch (ArrayIndexOutOfBoundsException e) {
-            Main.showAlertBox("An exception occurred!", null, "Could not locate LFCS/ID0!");
+            Main.showAlertBox("ArrayIndexOutOfBounds! Could not locate LFCS/ID0!");
         }
     }
 }

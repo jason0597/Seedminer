@@ -14,24 +14,18 @@ public class DataNodes {
         } catch (Exception e) {}
     }
 
-    public byte[][] GetDataNodes() throws IOException {
-        byte[] nodes_old_arr = null;
-        byte[] nodes_new_arr = null;
+    public byte[] GetDataNodes(boolean isNew3DS) throws IOException {
+        byte[] nodes;
 
         try {
-            nodes_old_arr = IOUtils.toByteArray(nodes_old_url);
-            nodes_new_arr = IOUtils.toByteArray(nodes_new_url);
-        }
-        catch (IOException e1) {
-            System.out.println("Failed to get the latest data nodes! Falling back to pre-bundled nodes...");
-
-            try (InputStream old_stream = getClass().getResourceAsStream("lfcs.dat");
-                 InputStream new_stream = getClass().getResourceAsStream("lfcs_new.dat"))
-            {
-                nodes_old_arr = IOUtils.toByteArray(old_stream);
-                nodes_new_arr = IOUtils.toByteArray(new_stream);
+            nodes = IOUtils.toByteArray(isNew3DS ? nodes_new_url : nodes_old_url);
+        } catch (IOException e1) {
+            //Failed to get the latest data nodes! Falling back to pre-bundled nodes...
+            try (InputStream stream = getClass().getResourceAsStream(isNew3DS ? "lfcs_new.dat" : "lfcs.dat")) {
+                nodes = IOUtils.toByteArray(stream);
             }
         }
-        return (new byte[][] {nodes_old_arr, nodes_new_arr});
+
+        return nodes;
     }
 }

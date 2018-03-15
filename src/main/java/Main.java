@@ -16,10 +16,10 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    public static void showAlertBox(String Title, String Header, String Content) {
+    public static void showAlertBox(String Content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(Title);
-        alert.setHeaderText(Header); //can be null
+        alert.setTitle("An exception occurred!");
+        alert.setHeaderText(null);
         alert.setContentText(Content);
         alert.showAndWait();
     }

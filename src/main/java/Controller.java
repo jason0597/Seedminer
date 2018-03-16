@@ -39,8 +39,6 @@ public class Controller {
             Main.showAlertBox(e.getMessage());
         } catch (NumberFormatException e) {
             Main.showAlertBox("Failed to parse the LFCS/ID0 bytes!");
-        } catch (ArrayIndexOutOfBoundsException e) {
-            Main.showAlertBox("ArrayIndexOutOfBounds! Could not locate LFCS/ID0!");
         }
     }
 }

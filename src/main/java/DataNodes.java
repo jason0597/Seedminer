@@ -3,7 +3,7 @@ import java.io.InputStream;
 import java.net.URL;
 import org.apache.commons.io.IOUtils;
 
-public class DataNodes {
+class DataNodes {
     private URL nodes_old_url;
     private URL nodes_new_url;
 

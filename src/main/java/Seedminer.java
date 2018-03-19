@@ -12,13 +12,13 @@ class Seedminer {
     private boolean isNew3DS;
     public boolean getNew3DS() { return isNew3DS; }
 
-    Seedminer(Path mp1, boolean IsGPUbf) throws IOException, NumberFormatException, ArrayIndexOutOfBoundsException {
+    Seedminer(Path mp1, boolean IsGPUbf) throws IOException, NumberFormatException {
         isGPUbf = IsGPUbf;
         ID0_str = FileParsing.ReadMP1(mp1, LFCS);
         isNew3DS = (LFCS[4] == 0x02);
     }
 
-    public void DoSeedminer(byte[] nodes) {
+    public void DoSeedminer(byte[] nodes) throws IOException {
         short[][] parsed_nodes = FileParsing.ReadNodes(nodes);
 
         ByteBuffer buffer = ByteBuffer.wrap(LFCS).order(ByteOrder.LITTLE_ENDIAN);
@@ -30,18 +30,11 @@ class Seedminer {
 
         ID0 = FileParsing.parseID0(ID0_str);
 
-        if (isGPUbf)
-            doGPUbf(msed3error);
-        else
-            doCPUbf(msed3error);
-    }
+        byte[] movableSed = calculateMovableSed(msed3error, isNew3DS);
 
-    private void doCPUbf(int msed3estimate) {
-
-    }
-
-    private void doGPUbf(int msed3estimate) {
-
+        Launcher launching = new Launcher(movableSed, ID0, isNew3DS, isGPUbf);
+        launching.exportFiles();
+        launching.doMining();
     }
 
     private int getMsed3Error(int LFCS_num, short[][] nodes) {
@@ -49,7 +42,7 @@ class Seedminer {
 
         int distance = Math.abs(LFCSes[0] - LFCS_num);
         int idx = 0;
-        for (int i = 0; i < LFCSes.length; i++){
+        for (int i = 0; i < LFCSes.length; i++) {
             int cdistance = Math.abs(LFCSes[i] - LFCS_num);
             if (cdistance < distance){
                 idx = i;
@@ -57,5 +50,28 @@ class Seedminer {
             }
         }
         return msed3s[idx];
+    }
+
+    private byte[] calculateMovableSed(int msed3error, boolean isNew3DS) {
+        byte[] movableSed = new byte[16];
+        System.arraycopy(LFCS, 0, movableSed, 0, 8);
+
+        if (isNew3DS) {
+            movableSed[0x4] = 0x02;
+            movableSed[0xF] = (byte)0x80;
+        }
+
+        ByteBuffer buffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
+        buffer.put(LFCS, 0, 4);
+
+        int msed3estimate = ( buffer.getInt(0) / 5) + (-1) * msed3error;
+
+        buffer.rewind();
+        buffer.putInt(msed3estimate);
+        byte[] msed3estimate_bytes = buffer.array();
+
+        System.arraycopy(msed3estimate_bytes, 0, movableSed, 12, 3);
+
+        return movableSed;
     }
 }

@@ -3,25 +3,23 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="323" maxWidth="700" minHeight="323.0" minWidth="700" prefHeight="323.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
+<AnchorPane maxHeight="323" maxWidth="700" minHeight="242.0" minWidth="350.0" prefHeight="255.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
    <children>
-      <TextArea layoutX="14.0" layoutY="14.0" prefHeight="300.0" prefWidth="343.0" />
-      <Button layoutX="634.0" layoutY="49.0" mnemonicParsing="false" onAction="#Browse_Button" text="Browse" />
-      <TextField fx:id="mp1txt_TextField" layoutX="473.0" layoutY="49.0" />
-      <Label layoutX="367.0" layoutY="53.0" text="movable_part1.txt" />
+      <Button layoutX="276.0" layoutY="37.0" mnemonicParsing="false" onAction="#Browse_Button" text="Browse" />
+      <TextField fx:id="mp1txt_TextField" layoutX="118.0" layoutY="37.0" />
+      <Label layoutX="15.0" layoutY="41.0" text="movable_part1.txt" />
 
-      <RadioButton fx:id="GPUbf_RadioButton" layoutX="547.0" layoutY="166.0" mnemonicParsing="false" text="GPU ">
+      <RadioButton fx:id="GPUbf_RadioButton" layoutX="228.0" layoutY="132.0" mnemonicParsing="false" text="GPU ">
          <toggleGroup>
             <ToggleGroup fx:id="bf_mode" />
          </toggleGroup></RadioButton>
-      <RadioButton fx:id="CPUbf_RadioButton" layoutX="418.0" layoutY="166.0" mnemonicParsing="false" text="CPU" toggleGroup="$bf_mode" />
+      <RadioButton fx:id="CPUbf_RadioButton" layoutX="63.0" layoutY="132.0" mnemonicParsing="false" text="CPU" toggleGroup="$bf_mode" />
 
-      <Button layoutX="414.0" layoutY="234.0" mnemonicParsing="false" onAction="#Bruteforce_Button" prefHeight="47.0" prefWidth="221.0" text="Begin bruteforce!" />
-      <Label layoutX="418.0" layoutY="128.0" text="Bruteforce using your CPU or your GPU?" />
+      <Button layoutX="65.0" layoutY="179.0" mnemonicParsing="false" onAction="#Bruteforce_Button" prefHeight="47.0" prefWidth="221.0" text="Begin bruteforce!" />
+      <Label layoutX="62.0" layoutY="100.0" text="Bruteforce using your CPU or your GPU?" />
    </children>
 </AnchorPane>

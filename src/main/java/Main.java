@@ -10,7 +10,7 @@ public class Main extends Application {
     }
 
     @Override public void start(Stage primaryStage) throws Exception{
-        primaryStage.setScene(new Scene(FXMLLoader.load(getClass().getResource("MainGUI.fxml")), 700, 323));
+        primaryStage.setScene(new Scene(FXMLLoader.load(getClass().getResource("MainGUI.fxml")), 350, 255));
         primaryStage.setTitle("Seedminer");
         primaryStage.setResizable(false);
         primaryStage.show();

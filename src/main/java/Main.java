@@ -1,3 +1,5 @@
+package main.java;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -10,7 +12,7 @@ public class Main extends Application {
     }
 
     @Override public void start(Stage primaryStage) throws Exception{
-        primaryStage.setScene(new Scene(FXMLLoader.load(getClass().getResource("MainGUI.fxml")), 350, 255));
+        primaryStage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/main/resources/MainGUI.fxml")), 350, 255));
         primaryStage.setTitle("Seedminer");
         primaryStage.setResizable(false);
         primaryStage.show();

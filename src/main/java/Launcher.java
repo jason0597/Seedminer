@@ -1,3 +1,5 @@
+package main.java;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,10 +27,10 @@ class Launcher {
             Path file2 = cl_folder.resolve("kernel_msky.cl");
             Path file3 = cl_folder.resolve("sha256_16.cl");
             Path file4 = tmpPath.resolve("bfcl.exe");
-            Files.copy(getClass().getResourceAsStream("common.h"), file1);
-            Files.copy(getClass().getResourceAsStream("kernel_msky.cl"), file2);
-            Files.copy(getClass().getResourceAsStream("sha256_16.cl"), file3);
-            Files.copy(getClass().getResourceAsStream("bfcl.exe"), file4);
+            Files.copy(getClass().getResourceAsStream("/main/resources/common.h"), file1);
+            Files.copy(getClass().getResourceAsStream("/main/resources/kernel_msky.cl"), file2);
+            Files.copy(getClass().getResourceAsStream("/main/resources/sha256_16.cl"), file3);
+            Files.copy(getClass().getResourceAsStream("/main/resources/bfcl.exe"), file4);
         }
     }
 

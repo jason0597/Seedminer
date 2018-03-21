@@ -12,6 +12,35 @@ class FileParsing {
         if (!Files.exists(mp1))
             throw new IOException("The specified file does not exist!");
 
+        String ID0;
+
+        String mp1Str = mp1.toString();
+        char extension = mp1Str.charAt((mp1Str.length() - 1));
+
+        if (extension == 't') {
+            ID0 = ReadMP1txt(mp1, LFCS);
+        } else {
+            ID0 = ReadMP1sed(mp1, LFCS);
+        }
+
+        return ID0;
+    }
+
+    private static String ReadMP1sed(Path mp1, byte[] LFCS) throws IOException {
+        byte[] bytes = Files.readAllBytes(mp1);
+
+        System.arraycopy(bytes, 0, LFCS, 0, 8);
+
+        byte[] str = new byte[32];
+
+        System.arraycopy(bytes, 16, str, 0, 32);
+
+        String return_value = new String(str);
+
+        return return_value;
+    }
+
+    private static String ReadMP1txt(Path mp1, byte[] LFCS) throws IOException, NumberFormatException {
         List<String> arrlist = Files.readAllLines(mp1);
 
         if (arrlist.size() < 17)

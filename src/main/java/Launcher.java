@@ -42,12 +42,11 @@ class Launcher {
         String id0Str = Hex.encodeHexString(ID0);
 
         String[] command = {
-            bfclexe, "msky", movableSedStr, id0Str, "00000000"
+            "cmd", "/c", "start", "cmd", "/c", bfclexe, "msky", movableSedStr, id0Str, "00000000"
         };
 
         ProcessBuilder procb = new ProcessBuilder(command);
         procb.directory(tmpPath.toFile());
-        procb.inheritIO();
         procb.start();
     }
 }

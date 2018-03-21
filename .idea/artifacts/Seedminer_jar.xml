@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="Seedminer:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/Seedminer_jar</output-path>
-    <root id="archive" name="Seedminer.jar">
-      <element id="module-output" name="Seedminer" />
-    </root>
-  </artifact>
-</component>

@@ -39,12 +39,11 @@ public class Controller {
             boolean isNew3DS = miner.getNew3DS();
             DataNodes downloader = new DataNodes();
             byte[] nodes = downloader.GetDataNodes(isNew3DS);
-            miner.DoSeedminer(nodes);
+            miner.parseNodes(nodes);
+            miner.DoSeedminer();
 
-        } catch (IOException e) {
+        } catch (IOException | NumberFormatException e) {
             Main.showAlertBox(e.getMessage());
-        } catch (NumberFormatException e) {
-            Main.showAlertBox("Failed to parse the LFCS/ID0 bytes!");
         }
     }
 }

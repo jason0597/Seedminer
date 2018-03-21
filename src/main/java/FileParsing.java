@@ -7,56 +7,67 @@ import java.util.List;
 
 class FileParsing {
     //Give it a Path object and a byte array, and it will read in the
-    //LFCS into byte array and it will return a string with the ID0
+    //LFCS into byte array and it will return a string with the (unparsed) ID0
     public static String ReadMP1(Path mp1, byte[] LFCS) throws IOException, NumberFormatException {
         if (!Files.exists(mp1))
             throw new IOException("The specified file does not exist!");
 
-        String ID0;
-
-        String mp1Str = mp1.toString();
-        char extension = mp1Str.charAt((mp1Str.length() - 1));
+        String mp1Str = mp1.toString(); //Convert it to a string, we need to find out the file extension
+        char extension = mp1Str.charAt((mp1Str.length() - 1)); //The file extension (the last char of it at least)
 
         if (extension == 't') {
-            ID0 = ReadMP1txt(mp1, LFCS);
-        } else {
-            ID0 = ReadMP1sed(mp1, LFCS);
-        }
+            List<String> arrlist = Files.readAllLines(mp1);
 
-        return ID0;
+            if (arrlist.size() < 17)
+                throw new NumberFormatException("Invalid movable_part1.txt file!");
+
+            String LFCS_str = arrlist.get(9);
+            String ID0_str  = arrlist.get(15);
+            if (LFCS_str.length() < 23 || ID0_str.length() < 32)
+                throw new NumberFormatException("The LFCS/ID0 has not been filled in properly!");
+
+            if (!checkIsHex(ID0_str)) {
+                throw new NumberFormatException("Invalid ID0!");
+            }
+
+            for (int i = 0; i < 24; i += 3) {
+                //why i use parseInt instead of parseByte ---> stackoverflow.com/questions/6996707
+                LFCS[i / 3] = (byte)Integer.parseInt(new String(new char[]{LFCS_str.charAt(i), LFCS_str.charAt(i+1)}), 16);
+            }
+
+            return ID0_str;
+        }
+        else if (extension == 'd') {
+            byte[] bytes = Files.readAllBytes(mp1);
+
+            if (bytes.length < 0x30) {
+                throw new NumberFormatException("movable_part1.sed is not 48 bytes in size!");
+            }
+
+            System.arraycopy(bytes, 0, LFCS, 0, 8);
+
+            byte[] str_bytes = new byte[32];
+            System.arraycopy(bytes, 0x10, str_bytes, 0, 0x20);
+            String ID0_str = new String(str_bytes);
+
+            if (!checkIsHex(ID0_str)) {
+                throw new NumberFormatException();
+            }
+
+            return ID0_str;
+        }
+        else {
+            throw new NumberFormatException();
+        }
     }
 
-    private static String ReadMP1sed(Path mp1, byte[] LFCS) throws IOException {
-        byte[] bytes = Files.readAllBytes(mp1);
-
-        System.arraycopy(bytes, 0, LFCS, 0, 8);
-
-        byte[] str = new byte[32];
-
-        System.arraycopy(bytes, 16, str, 0, 32);
-
-        String return_value = new String(str);
-
-        return return_value;
-    }
-
-    private static String ReadMP1txt(Path mp1, byte[] LFCS) throws IOException, NumberFormatException {
-        List<String> arrlist = Files.readAllLines(mp1);
-
-        if (arrlist.size() < 17)
-            throw new NumberFormatException("Invalid movable_part1.txt file!");
-
-        String LFCS_str = arrlist.get(9);
-        String ID0_str  = arrlist.get(15);
-        if (LFCS_str.length() != 23 || ID0_str.length() != 32)
-            throw new IOException("The LFCS/ID0 have not been filled in properly!");
-
-        for (int i = 0; i < 24; i += 3) {
-            //why i use parseInt instead of parseByte ---> stackoverflow.com/questions/6996707
-            LFCS[i / 3] = (byte)Integer.parseInt(new String(new char[]{LFCS_str.charAt(i), LFCS_str.charAt(i+1)}), 16);
+    private static boolean checkIsHex(String str) {
+        for (int i = 0; i < str.length(); i++) {
+            if (Character.digit(str.charAt(i), 16) == -1) {
+                return false;
+            }
         }
-
-        return ID0_str;
+        return true;
     }
 
     //Parses the node file into short array (pairs of LFCSes and msed3s)
@@ -76,9 +87,7 @@ class FileParsing {
         return return_nodes;
     }
 
-    //parses the ID0 to its normal state from the below printf
-    //printf("%08X%08X%08X%08X", hashword[0], hashword[1], hashword[2], hashword[3])
-    //each hashword is 4 bytes long, i.e. 8 characters long
+    //This method reverses this process -> pastebin.com/V6rCXJqb
     public static byte[] parseID0(String ID0_str) throws NumberFormatException {
         String[] ID0_bytes_str = new String[16];
         for (int i = 0; i < 0x20; i += 2)

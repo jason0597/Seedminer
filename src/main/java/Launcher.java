@@ -1,52 +1,63 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import org.apache.commons.codec.binary.Hex;
 
 class Launcher {
-    private byte[] LFCS;
     private byte[] ID0;
     private byte[] movableSed;
     private boolean isGPUbf;
-    Path tmpPath;
+    private Path tmpPath;
 
-    Launcher(byte[] movablesed, byte[] id0, boolean isNew3DS, boolean isgpubf) {
+    Launcher(byte[] movablesed, byte[] id0, boolean isgpubf) {
+        movableSed = movablesed;
         ID0 = id0;
         isGPUbf = isgpubf;
-        movableSed = movablesed;
     }
 
     public void exportFiles() throws IOException {
-        tmpPath = Files.createTempDirectory("Seedminer-java");
-        String tmpPathStr = tmpPath.toString();
-        if (isGPUbf) {
-            Path cl_folder = Files.createDirectory(Paths.get(tmpPathStr, "cl"));
-            String cl_folderStr = cl_folder.toString();
-            Path file1 = Paths.get(cl_folderStr, "common.h");
-            Path file2 = Paths.get(cl_folderStr, "kernel_msky.cl");
-            Path file3 = Paths.get(cl_folderStr, "sha256_16.cl");
-            Path file4 = Paths.get(tmpPathStr, "bfcl.exe");
+        tmpPath = Files.createTempDirectory("Seedminer-java-");
+
+        if (!isGPUbf) {
+            throw new IOException("CPU bruteforcing is not yet implemented!");
+        } else {
+            Path cl_folder = Files.createDirectory(tmpPath.resolve("cl"));
+            Path file1 = cl_folder.resolve("common.h");
+            Path file2 = cl_folder.resolve("kernel_msky.cl");
+            Path file3 = cl_folder.resolve("sha256_16.cl");
+            Path file4 = tmpPath.resolve("bfcl.exe");
             Files.copy(getClass().getResourceAsStream("common.h"), file1);
             Files.copy(getClass().getResourceAsStream("kernel_msky.cl"), file2);
             Files.copy(getClass().getResourceAsStream("sha256_16.cl"), file3);
             Files.copy(getClass().getResourceAsStream("bfcl.exe"), file4);
-        } else {
-            throw new IOException("CPU bruteforcing is not yet implemented! We're waiting for the new AVX bruteforcer...");
         }
     }
 
     public void doMining() throws IOException {
-        String bfclexe = tmpPath.toString() + "\\bfcl.exe";
-        String movableSedStr = Hex.encodeHexString(movableSed);
-        String id0Str = Hex.encodeHexString(ID0);
+        String bfclexe = tmpPath.resolve("bfcl.exe").toString();
+        String movableSedStr = bytesToHex(movableSed);
+        String id0Str = bytesToHex(ID0);
 
         String[] command = {
             "cmd", "/c", "start", "cmd", "/c", bfclexe, "msky", movableSedStr, id0Str, "00000000"
         };
 
+        System.out.println("The command being executed is --> \n\"" + String.join(" ", command) + "\"");
+
         ProcessBuilder procb = new ProcessBuilder(command);
         procb.directory(tmpPath.toFile());
+        System.out.println("Executing...");
         procb.start();
+    }
+
+    //copy pasted without shame from stackoverflow.com/questions/9655181
+    public static String bytesToHex(byte[] bytes) {
+        final char[] hexArray = "0123456789ABCDEF".toCharArray();
+        char[] hexChars = new char[bytes.length * 2];
+        for ( int j = 0; j < bytes.length; j++ ) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
     }
 }
